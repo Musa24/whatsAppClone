@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Avatar, IconButton } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
@@ -7,9 +7,26 @@ import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
 
 import './Chat.css';
+import { useParams } from 'react-router-dom';
+import db from '../firebase/config';
 
 function Chat() {
   const [input, setInput] = useState('');
+  const { roomId } = useParams();
+  const [roomName, setRoomName] = useState('');
+
+  useEffect(() => {
+    if (roomId) {
+      db.collection('rooms')
+        .doc(roomId)
+        .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
+    }
+
+    // return () => {
+    //   // cleanup
+    // };
+  }, [roomId]);
+
   const hadleSubmit = (e) => {
     e.preventDefault();
     console.log('Submit', input);
@@ -21,7 +38,7 @@ function Chat() {
       <div className="Chat-header">
         <Avatar />
         <div className="Chat-headerInfo">
-          <h3>Room name</h3>
+          <h3>{roomName}</h3>
           <p>Last seen</p>
         </div>
         <div className="Chat-headerRight">
