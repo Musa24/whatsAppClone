@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Avatar, IconButton } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
@@ -9,11 +9,15 @@ import MicIcon from '@material-ui/icons/Mic';
 import './Chat.css';
 import { useParams } from 'react-router-dom';
 import db from '../firebase/config';
+import firebase from 'firebase';
+import { AuthContext } from '../contexts/Auth';
 
 function Chat() {
+  const { user } = useContext(AuthContext);
   const [input, setInput] = useState('');
   const { roomId } = useParams();
   const [roomName, setRoomName] = useState('');
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     if (roomId) {
@@ -22,6 +26,13 @@ function Chat() {
         .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
     }
 
+    db.collection('rooms')
+      .doc(roomId)
+      .collection('messages')
+      .orderBy('timestamp', 'asc')
+      .onSnapshot((snapshot) =>
+        setMessages(snapshot.docs.map((doc) => doc.data()))
+      );
     // return () => {
     //   // cleanup
     // };
@@ -29,7 +40,12 @@ function Chat() {
 
   const hadleSubmit = (e) => {
     e.preventDefault();
-    console.log('Submit', input);
+    db.collection('rooms').doc(roomId).collection('messages').add({
+      message: input,
+      name: user.displayName,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
+
     setInput('');
   };
 
@@ -39,7 +55,16 @@ function Chat() {
         <Avatar />
         <div className="Chat-headerInfo">
           <h3>{roomName}</h3>
-          <p>Last seen</p>
+
+          {messages.length > 0 && (
+            <p>
+              {' '}
+              last seen
+              {new Date(
+                messages[messages.length - 1]?.timestamp?.toDate()
+              )?.toUTCString()}
+            </p>
+          )}
         </div>
         <div className="Chat-headerRight">
           <IconButton>
@@ -51,16 +76,20 @@ function Chat() {
         </div>
       </div>
       <div className="Chat-body">
-        <p className={`Chat-message  ${true && 'Chat-receiver'}   `}>
-          <span className="Chat-name">Musa</span>
-          Hey Guys My name is Musa
-          <span className="Chat-timestamp">3.12pm</span>
-        </p>
-        <p className={`Chat-message  ${false && 'Chat-receiver'}   `}>
-          <span className="Chat-name">Musa</span>
-          Hey Guys My name is Musa
-          <span className="Chat-timestamp">3.12pm</span>
-        </p>
+        {messages.map((message) => (
+          <p
+            className={`Chat-message  ${
+              message.name === user.displayName && 'Chat-receiver'
+            }   `}
+          >
+            <span className="Chat-name">{message.name}</span>
+            {message.message}
+            <span className="Chat-timestamp">
+              {/* handling the timestamp in firebase */}
+              {new Date(message.timestamp?.toDate()).toUTCString()}
+            </span>
+          </p>
+        ))}
       </div>
       <div className="Chat-footer">
         <InsertEmoticonIcon />
