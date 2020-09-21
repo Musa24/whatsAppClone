@@ -37,6 +37,31 @@
   overflow: scroll;
 }
 
+.Chat-body > p {
+  /* background-color: blue; */
+  position: relative;
+}
+
+.Chat-delete {
+  position: absolute;
+  top: 0;
+  right: 5px;
+  display: none;
+}
+
+.Chat-delete .MuiSvgIcon-root {
+  font-size: 1rem !important;
+}
+
+.Chat-body > p:hover .Chat-delete {
+  display: block;
+}
+
+/* .Chat-body > p:hover .Chat-receiver,
+.Chat-delete {
+  display: none !important;
+} */
+
 .Chat-message {
   position: relative;
   background-color: #fff;
@@ -61,7 +86,13 @@
 .Chat-receiver {
   margin-left: auto;
   background-color: #dcf8c6;
+  /* background-color: red; */
 }
+
+/* hIDE DELETE bUTTON */
+/* .Chat-receiver .Chat-delete {
+  display: none;
+} */
 
 .Chat-footer {
   display: flex;

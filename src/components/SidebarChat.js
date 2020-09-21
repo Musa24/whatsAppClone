@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import db from '../firebase/config';
 import './SidebarChat.css';
+import { Button } from 'react-bootstrap';
+import truncate from '../helpers/truncate';
 
 function SidebarChat({ addNewChat, name, id }) {
   const [messages, setMessages] = useState('');
@@ -35,7 +37,8 @@ function SidebarChat({ addNewChat, name, id }) {
         <Avatar />
         <div className="SidebarChat-info">
           <h2>{name}</h2>
-          <p>{messages[0]?.message}</p>
+
+          <p>{truncate(messages[0]?.message, 27)}</p>
         </div>
       </div>
     </Link>

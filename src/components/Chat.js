@@ -5,6 +5,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import InsertEmoticonIcon from '@material-ui/icons/InsertEmoticon';
 import MicIcon from '@material-ui/icons/Mic';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import './Chat.css';
 import { useParams } from 'react-router-dom';
@@ -18,12 +19,13 @@ function Chat() {
   const { roomId } = useParams();
   const [roomName, setRoomName] = useState('');
   const [messages, setMessages] = useState([]);
+  const [showDeleteBtn, setShowDeleteBtn] = useState(true);
 
   useEffect(() => {
     if (roomId) {
       db.collection('rooms')
         .doc(roomId)
-        .onSnapshot((snapshot) => setRoomName(snapshot.data().name));
+        .onSnapshot((snapshot) => setRoomName(snapshot.data()?.name));
     }
 
     db.collection('rooms')
@@ -31,7 +33,9 @@ function Chat() {
       .collection('messages')
       .orderBy('timestamp', 'asc')
       .onSnapshot((snapshot) =>
-        setMessages(snapshot.docs.map((doc) => doc.data()))
+        setMessages(
+          snapshot.docs.map((doc) => ({ data: doc.data(), id: doc.id }))
+        )
       );
     // return () => {
     //   // cleanup
@@ -43,10 +47,28 @@ function Chat() {
     db.collection('rooms').doc(roomId).collection('messages').add({
       message: input,
       name: user.displayName,
+      email: user.email,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
 
     setInput('');
+  };
+
+  //Deleting a message
+  const handleDelete = (e) => {
+    const id = e.target.parentElement.parentElement.parentElement.dataset.id;
+
+    db.collection('rooms')
+      .doc(roomId)
+      .collection('messages')
+      .doc(id)
+      .delete()
+      .then(() => {
+        console.log('Document Successfully deleted');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -58,8 +80,7 @@ function Chat() {
 
           {messages.length > 0 && (
             <p>
-              {' '}
-              last seen
+              last seen{' '}
               {new Date(
                 messages[messages.length - 1]?.timestamp?.toDate()
               )?.toUTCString()}
@@ -75,19 +96,27 @@ function Chat() {
           </IconButton>
         </div>
       </div>
+
       <div className="Chat-body">
         {messages.map((message) => (
           <p
+            key={message.id}
+            data-id={message.id}
             className={`Chat-message  ${
-              message.name === user.displayName && 'Chat-receiver'
+              message.data.email === user.email && 'Chat-receiver'
             }   `}
           >
-            <span className="Chat-name">{message.name}</span>
-            {message.message}
+            <span className="Chat-name">{message.data.name}</span>
+            {message.data.message}
             <span className="Chat-timestamp">
               {/* handling the timestamp in firebase */}
-              {new Date(message.timestamp?.toDate()).toUTCString()}
+              {new Date(message?.data.timestamp?.toDate()).toUTCString()}
             </span>
+            {message.data.email == user.email && (
+              <span className="Chat-delete" onClick={handleDelete}>
+                <DeleteIcon />
+              </span>
+            )}
           </p>
         ))}
       </div>
