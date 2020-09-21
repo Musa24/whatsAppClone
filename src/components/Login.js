@@ -1,14 +1,17 @@
 import { Button } from '@material-ui/core';
 import { auth, provider } from '../firebase/config';
-import React from 'react';
+import React, { useContext } from 'react';
 import './Login.css';
+import { AuthContext } from '../contexts/Auth';
 
 function Login() {
+  const { setUser } = useContext(AuthContext);
+
   const handleSign = () => {
     auth
       .signInWithPopup(provider)
       .then((result) => {
-        console.log(result);
+        setUser(result.user);
       })
       .catch((error) => console.log(error));
   };

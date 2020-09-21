@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Avatar, IconButton } from '@material-ui/core';
 import DonutLargeIcon from '@material-ui/icons/DonutLarge';
 import ChatIcon from '@material-ui/icons/Chat';
@@ -7,8 +7,10 @@ import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import './Sidebar.css';
 import SidebarChat from './SidebarChat';
 import db from '../firebase/config';
+import { AuthContext } from '../contexts/Auth';
 
 function Sidebar() {
+  const { user } = useContext(AuthContext);
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ function Sidebar() {
   return (
     <div className="Sidebar">
       <div className="Sidebar-header">
-        <Avatar />
+        <Avatar src={user?.photoURL} />
         <div className="Sidebar-headerRight">
           <IconButton>
             <DonutLargeIcon />
