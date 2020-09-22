@@ -9,7 +9,4 @@ This is WhatsApp Clone [Hosted Here](https://whatsapp-clone-6fc7f.web.app/rooms/
 
 ## `Preview of UI`
 
-<img width="1440" alt="Screenshot 2020-09-23 at 00 45 32" src="https://user-images.githubusercontent.com/61393954/93941830-e974dc80-fd37-11ea-91af-14372d917411.png">
-
-
-
+<img width="1440" alt="Screenshot 2020-09-23 at 01 01 48" src="https://user-images.githubusercontent.com/61393954/93942146-820b5c80-fd38-11ea-8a4e-c5641c118801.png">
