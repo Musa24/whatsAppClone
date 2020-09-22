@@ -1,7 +1,7 @@
 import React from 'react';
 
 function TestingComponent(props) {
-  console.log(props);
+  console.log('PROPS', props);
   return <div>This</div>;
 }
 

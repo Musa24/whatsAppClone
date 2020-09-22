@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import db from '../firebase/config';
 import './SidebarChat.css';
-import { Button } from 'react-bootstrap';
+
 import truncate from '../helpers/truncate';
 
 function SidebarChat({ addNewChat, name, id }) {
@@ -26,7 +26,6 @@ function SidebarChat({ addNewChat, name, id }) {
 
     if (roomName) {
       //do something
-      console.log(roomName);
       db.collection('rooms').add({ name: roomName });
     }
   };
@@ -36,9 +35,9 @@ function SidebarChat({ addNewChat, name, id }) {
       <div className="SidebarChat">
         <Avatar />
         <div className="SidebarChat-info">
-          <h2>{name}</h2>
+          <h4>{name}</h4>
 
-          <p>{truncate(messages[0]?.message, 27)}</p>
+          <p>{truncate(messages[0]?.message, 41)}</p>
         </div>
       </div>
     </Link>

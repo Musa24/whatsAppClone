@@ -12,14 +12,18 @@ import { useParams } from 'react-router-dom';
 import db from '../firebase/config';
 import firebase from 'firebase';
 import { AuthContext } from '../contexts/Auth';
+import RoomSetting from './RoomSetting';
+import { SettingContext } from '../contexts/SettingContext';
 
 function Chat() {
   const { user } = useContext(AuthContext);
+  const { roomSetting, toggleRoomSetting } = useContext(SettingContext);
   const [input, setInput] = useState('');
   const { roomId } = useParams();
   const [roomName, setRoomName] = useState('');
   const [messages, setMessages] = useState([]);
-  const [showDeleteBtn, setShowDeleteBtn] = useState(true);
+  // const [showDeleteBtn, setShowDeleteBtn] = useState(true);
+  const [showRoomSetting, setShowRoomSetting] = useState(false);
 
   useEffect(() => {
     if (roomId) {
@@ -37,10 +41,12 @@ function Chat() {
           snapshot.docs.map((doc) => ({ data: doc.data(), id: doc.id }))
         )
       );
-    // return () => {
-    //   // cleanup
-    // };
-  }, [roomId]);
+
+    //Close roomSetting
+    if (roomSetting) {
+      setShowRoomSetting(false);
+    }
+  }, [roomId, roomSetting]);
 
   const hadleSubmit = (e) => {
     e.preventDefault();
@@ -71,6 +77,14 @@ function Chat() {
       });
   };
 
+  //OPTION
+  const handleMoreOption = () => {
+    toggleRoomSetting(false);
+    console.log('Hnaldop', roomSetting);
+    setShowRoomSetting(!showRoomSetting);
+    console.log('Lat line');
+  };
+
   return (
     <div className="Chat">
       <div className="Chat-header">
@@ -82,7 +96,7 @@ function Chat() {
             <p>
               last seen{' '}
               {new Date(
-                messages[messages.length - 1]?.timestamp?.toDate()
+                messages[messages.length - 1]?.data?.timestamp?.toDate()
               )?.toUTCString()}
             </p>
           )}
@@ -92,7 +106,10 @@ function Chat() {
             <SearchIcon />
           </IconButton>
           <IconButton>
-            <MoreVertIcon />
+            <MoreVertIcon
+              onClick={handleMoreOption}
+              className="handleMoreOption"
+            />
           </IconButton>
         </div>
       </div>
@@ -112,7 +129,7 @@ function Chat() {
               {/* handling the timestamp in firebase */}
               {new Date(message?.data.timestamp?.toDate()).toUTCString()}
             </span>
-            {message.data.email == user.email && (
+            {message.data.email === user.email && (
               <span className="Chat-delete" onClick={handleDelete}>
                 <DeleteIcon />
               </span>
@@ -133,6 +150,7 @@ function Chat() {
         </form>
         <MicIcon />
       </div>
+      {showRoomSetting && <RoomSetting />}
     </div>
   );
 }

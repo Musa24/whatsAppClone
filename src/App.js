@@ -1,16 +1,32 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 
 import './App.css';
 import Chat from './components/Chat';
 import Sidebar from './components/Sidebar';
-import { Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Login from './components/Login';
 import { AuthContext } from './contexts/Auth';
+import { SettingContext } from './contexts/SettingContext';
 
 function App() {
   const { user } = useContext(AuthContext);
+  const { toggleRoomSetting } = useContext(SettingContext);
+
+  const handleClick = (e) => {
+    const handleMoreOption = e.target.classList[1];
+    const roomSettingOption = e.target.parentElement.classList.value;
+    if (
+      !(
+        roomSettingOption === 'RoomSetting' ||
+        handleMoreOption === 'handleMoreOption'
+      )
+    ) {
+      toggleRoomSetting(true);
+    }
+  };
+
   return (
-    <div className="App">
+    <div className="App" onClick={handleClick}>
       {!user ? (
         <Login />
       ) : (
@@ -21,7 +37,7 @@ function App() {
               <Chat />
             </Route>
             <Route exact path="/">
-              <h1>Home</h1>
+              <div className="App-home"></div>
             </Route>
           </Switch>
         </div>

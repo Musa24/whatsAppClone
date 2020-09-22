@@ -15,13 +15,13 @@ function Login() {
       })
       .catch((error) => console.log(error));
   };
+
   return (
     <div className="Login">
       <div className="Login-container">
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/300px-WhatsApp.svg.png"
           alt="logo"
-          alt=""
         />
         <div className="Login-text">
           <h1>Sign in to WhatsApp-Clone</h1>

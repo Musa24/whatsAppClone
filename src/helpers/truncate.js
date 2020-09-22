@@ -1,6 +1,10 @@
 const truncate = (str, length) => {
   if (str) {
-    return str.split('').splice(0, length).join('') + '...';
+    if (str.length > 41) {
+      return str.split('').splice(0, length).join('') + '...';
+    } else {
+      return str.split('').splice(0, length).join('');
+    }
   }
 };
 

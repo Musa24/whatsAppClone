@@ -5,6 +5,10 @@
   border-bottom: 1px solid #f6f6f6;
 }
 
+.SidebarChat > h2 {
+  font-weight: 400;
+}
+
 .SidebarChat:hover {
   background-color: #ebebeb;
 }
